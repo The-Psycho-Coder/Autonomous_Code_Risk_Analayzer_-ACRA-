@@ -1,0 +1,1 @@
+**ACRA** is a hybrid static analysis engine that combines deterministic Abstract Syntax Tree (AST) parsing with LLM-based reasoning to detect complex security vulnerabilities often missed by standard regex-based linters.
