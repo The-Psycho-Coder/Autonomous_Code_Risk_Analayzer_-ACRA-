@@ -1,0 +1,75 @@
+[
+  {
+    "category": "SQL Injection",
+    "description": "User input directly concatenated into SQL query string without parameterization.",
+    "bad_code_pattern": "cursor.execute('SELECT * FROM users WHERE id = ' + user_input)",
+    "fix": "Use parameterized queries like cursor.execute('SELECT * FROM users WHERE id = %s', (user_input,)) or cursor.execute('SELECT * FROM users WHERE id = ?', (user_input,))"
+  },
+  {
+    "category": "SQL Injection",
+    "description": "String formatting used to build SQL queries with user input.",
+    "bad_code_pattern": "query = f\"SELECT * FROM users WHERE name = '{username}'\"",
+    "fix": "Use parameterized queries: cursor.execute('SELECT * FROM users WHERE name = %s', (username,))"
+  },
+  {
+    "category": "Hardcoded Secrets",
+    "description": "API keys or passwords hardcoded in variables.",
+    "bad_code_pattern": "api_key = 'sk-12345abcdef'",
+    "fix": "Use environment variables: api_key = os.getenv('API_KEY') or use a secrets management service."
+  },
+  {
+    "category": "Hardcoded Secrets",
+    "description": "Database credentials hardcoded in source code.",
+    "bad_code_pattern": "password = 'mypassword123'",
+    "fix": "Store credentials in environment variables or a secure secrets manager."
+  },
+  {
+    "category": "Insecure Direct Object Reference (IDOR)",
+    "description": "Access control missing - user can access resources by manipulating IDs.",
+    "bad_code_pattern": "def get_user_data(user_id):\n    return db.query('SELECT * FROM users WHERE id = ' + user_id)",
+    "fix": "Verify user has permission: if not user.has_permission(user_id): raise PermissionError()"
+  },
+  {
+    "category": "Cross-Site Scripting (XSS)",
+    "description": "User input rendered directly in HTML without sanitization.",
+    "bad_code_pattern": "html = f'<div>{user_input}</div>'",
+    "fix": "Escape HTML: from html import escape; html = f'<div>{escape(user_input)}</div>'"
+  },
+  {
+    "category": "Command Injection",
+    "description": "User input passed directly to shell commands.",
+    "bad_code_pattern": "os.system(f'ping {user_input}')",
+    "fix": "Use subprocess with proper escaping: subprocess.run(['ping', user_input], check=True)"
+  },
+  {
+    "category": "Path Traversal",
+    "description": "User input used in file paths without validation.",
+    "bad_code_pattern": "with open('/data/' + filename, 'r') as f:",
+    "fix": "Validate and sanitize: import os.path; safe_path = os.path.normpath(os.path.join('/data', os.path.basename(filename)))"
+  },
+  {
+    "category": "Insecure Deserialization",
+    "description": "Unsafe deserialization of user-controlled data.",
+    "bad_code_pattern": "data = pickle.loads(user_input)",
+    "fix": "Use safe serialization formats like JSON, or validate and sanitize input before deserialization."
+  },
+  {
+    "category": "Weak Cryptography",
+    "description": "Using weak or deprecated cryptographic functions.",
+    "bad_code_pattern": "import hashlib; hash = hashlib.md5(password).hexdigest()",
+    "fix": "Use strong hashing: import bcrypt; hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt())"
+  },
+  {
+    "category": "Insufficient Logging",
+    "description": "Sensitive information logged without sanitization.",
+    "bad_code_pattern": "logger.info(f'User login: {password}')",
+    "fix": "Never log sensitive data: logger.info(f'User login: {username}')"
+  },
+  {
+    "category": "Mass Assignment",
+    "description": "User input directly assigned to model attributes without filtering.",
+    "bad_code_pattern": "user.__dict__.update(request.data)",
+    "fix": "Whitelist allowed fields: allowed = {'name', 'email'}; user.update({k: v for k, v in request.data.items() if k in allowed})"
+  }
+]
+
